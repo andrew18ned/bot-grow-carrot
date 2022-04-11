@@ -9,6 +9,7 @@ import telebot
 from telebot import types
 
 
+# config
 global db
 global sql
 db = sqlite3.connect('dates.db', check_same_thread=False)
@@ -20,7 +21,7 @@ login = ''
 password = ''
 
 
-# створення БД
+# create databese
 sql.execute("""CREATE TABLE IF NOT EXISTS users (
     login TEXT,
     password TEXT,
@@ -44,7 +45,7 @@ def welocome(message):
 Слава Україні! ''', reply_markup=markup)
 
 
-# створення профіля та занесення в БД
+# create profile and added login/password
 def request_login(message):
     global login
     login = message.text
@@ -70,7 +71,7 @@ def request_password(message):
         bot.register_next_step_handler(message, log_in)
 
 
-# вхід у БД
+# connection DB
 def log_in(message):
     global login, password
     login = message.text
@@ -84,8 +85,8 @@ def pass_in(message):
     user_login  = login
     user_password = message.text
     
-    '''Якщо такого користувача немає в БД, то ми його відправляємо на реєстацію
-    Якщо ж ні, то він є в БД та ми граємо гру'''
+    '''If that user not register go to refister form
+    else continue play game'''
     
     for i in sql.execute(f"SELECT dick FROM users WHERE login = '{user_login}'"):
         balance = i[0]    
@@ -95,14 +96,14 @@ def pass_in(message):
         bot.register_next_step_handler(message, request_login)
 
     else:
-        # рандомне значення, яке буде генеруватися
+        # ganerate random number
         dick_heigth = randint(-20, 20) 
         
-        # взалежності від знаку числа, виводити різні повідомлення. Проте значення оновлювати в БД
+        # depend on nuber show message and update DB
         if dick_heigth > 0:
             bot.send_message(message.chat.id, 'Вітаю, '+str(user_login)+' ваш пісюн збільшився на '+str(dick_heigth)+' см.')
             
-            # оновлення значень
+            # update db
             sql.execute(f'UPDATE users SET dick = {dick_heigth + balance} WHERE login = "{user_login}"')
             db.commit()
             
@@ -118,7 +119,6 @@ def pass_in(message):
     
   
 
-# оброботчик подій
 @bot.callback_query_handler(func=lambda call:True)
 def callback_inline(call):
     if call.data == '1':
@@ -126,8 +126,7 @@ def callback_inline(call):
         bot.register_next_step_handler(call.message, request_login)
     
     elif call.data == '2':
-        '''я створюю локанльний список та закидаю в нього вложений список із ім*ям та значенням в породку спадання
-        через цикл ФОР я перепираю його значення та виводжу в телеграм'''
+        '''create template list and added information about user'''
         top_list = []
         for i in sql.execute('SELECT login, dick FROM users'):
             template_list = []
@@ -176,9 +175,7 @@ def lalala(message):
             bot.send_message(message.chat.id, 'Ну що ж, будемо вирощувати пісюни\nВиберіть дію: ', reply_markup=state_game)
                       
         elif message.text == 'Інформація':
-            information = '''Щодня у світі ламаються пісюни від необережного використання. 
-Ваші розміри пісюна ніяк не пов*язані з довжиною стопи.
-Пісюн - це не м*яз.''' 
+            information = '''Something about information''' 
             bot.send_message(message.chat.id, information)           
            
 
