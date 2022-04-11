@@ -2,4 +2,4 @@
 This is my telegram game bot on python
 
 ## Run 
-pytgon app.py
+python app.py
