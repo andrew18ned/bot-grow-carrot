@@ -2,7 +2,7 @@
 This is my telegram game bot on python
 
 ## Used
-* connect database SQLite3
+* SQLite3
 * pytelegramAPI
 
 ## Run 
